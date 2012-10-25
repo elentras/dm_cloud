@@ -6,7 +6,8 @@ module DMCloud
     DAILYMOTION_API = 'http://api.dmcloud.net/api'
     
     def self.send_request(params)
-      puts 'params : ' + params.to_yaml
+      puts 'body request params : ' + params.to_json + "\n" + '-' * 80
+      
       @uri = URI.parse(DAILYMOTION_API)
 
       http    = Net::HTTP.new(@uri.host, @uri.port)
@@ -15,16 +16,15 @@ module DMCloud
       request.content_type = 'application/json'
       request.body = params.to_json
       
-      puts 'request : ' + request.to_yaml
+      puts 'request (YAML format ): ' + request.to_yaml + "\n" + '-' * 80
       
       http.request(request).body
       
     end
     
-    
     def self.execute(call, params = {})
       request = DMCloud::Signing.identify(params)
-      params.merge!({'auth' => request})
+      params['auth'] = request
       result = send_request(params)
       parse_response(result)
     end

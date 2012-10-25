@@ -11,7 +11,11 @@ module DMCloud
       api_key  = DMCloud.config[:secret_key]
       
       normalized_request = normalize(request).to_s
+      puts 'normalized_values : ' + normalized_request + "\n" + '-' * 80
+      
       params = user_id + normalized_request + api_key
+      
+      puts 'Values before MD5 encrypt  : ' + params + "\n" + '-' * 80
       
       checksum = Digest::MD5.hexdigest(params)
       auth_token = user_id + ':' + checksum

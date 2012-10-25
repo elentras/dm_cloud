@@ -21,12 +21,9 @@ module DMCloud
         raise StandardError, "missing :media_id in params" unless media_id
         request = Hash.new
 
-        puts 'media_id :' + media_id
-
         # the media id
         request['id'] = media_id
         request['fields'] = []
-
 
         # requested media meta datas
         fields[:meta].each { |value| request['fields'] << "meta.#{value}" } if fields[:meta].present?
