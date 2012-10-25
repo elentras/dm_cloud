@@ -1,5 +1,24 @@
 module DMCloud
   class Signing
+    # Generate auth token for request from Media
+    # Params:
+    #   request: A hash of params generated from Media methods and Media::MetaData
+    # Result :
+    #   return a string which contain the auth token for the request
+    #   <url>?auth=<expires>-<sec>-<nonce>-<md5sum>[-<pub-sec-data>]
+    def self.identify(request)
+      user_id  = DMCloud.config[:user_key]
+      api_key  = DMCloud.config[:secret_key]
+      
+      normalized_request = normalize(request).to_s
+      params = user_id + normalized_request + api_key
+      
+      checksum = Digest::MD5.hexdigest(params)
+      auth_token = user_id + ':' + checksum
+
+      auth_token
+    end
+    
     # To sign a URL, the client needs a secret shared with Dailymotion Cloud.
     # This secret is call client secret and is available in the back-office interface.
     # Params:
@@ -141,6 +160,12 @@ module DMCloud
           nil
       end
       result
+    end
+    
+    def self.normalize(params)
+      str = params.to_json.to_s
+      str.gsub!(/[^A-Za-z0-9]/, '')
+      str
     end
   end
 end

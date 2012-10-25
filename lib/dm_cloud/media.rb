@@ -1,3 +1,5 @@
+require 'dm_cloud/builder/media'
+
 module DMCloud
   class Media
     # Creates a new media object.
@@ -13,14 +15,14 @@ module DMCloud
     #       when you set this parameter you must also set the url parameter
     # Return :
     #   media_id: return the media id of the object
-    def self.create(media_id)
-      call = "media.create"
+    def self.create(options)
+      call_type = "media.create"
 
       params = {
-        call: call,
-        args: DMCloud::Builder::Media.create(args)
+        :call =>  call_type,
+        args: Builder::Media.create(options)
       }
-      DMCloud::Request.execute(call, params)
+      DMCloud::Request.execute(call_type, params)
     end
     
     # Delete a media object with all its associated assets.
@@ -29,24 +31,14 @@ module DMCloud
     #   id (media ID) – (required) the id of the media object you want to delete.
     # Return :
     #   Nothing
-    def self.delete
-      call = "media.delete"
+    def self.delete(media_id)
+      call_type = "media.delete"
 
       params = {
-        call: call,
+        :call =>  call_type,
         args: { id: media_id}
       }
-      DMCloud::Request.execute(call, params)
-    end
-    
-    def self.info(fields = [])
-      call = "media.info"
-
-      params = {
-        call: call,
-        args: DMCloud::Builder::Media.info(fields)
-      }
-      DMCloud::Request.execute(call, params)
+      DMCloud::Request.execute(call_type, params)
     end
     
     # Gives information about a given media object.
@@ -54,18 +46,40 @@ module DMCloud
     # Params :
     #   media_id: (media ID) – (required) the id of the new media object.
     #   fields (Array) – (required) the list of fields to retrieve.
-    # Returns:	a multi-level structure containing about the media related to the requested fields.
-    Return type:	Object
+    # Returns:
+    #   a multi-level structure containing about the media related to the requested fields.
+    def self.info(media_id, assets_names = ['source'], fields = [])
+      call_type = "media.info"
+
+      params = {
+        :call =>  call_type,
+        args: DMCloud::Builder::Media.info(media_id, assets_names, fields)
+      }
+      DMCloud::Request.execute(call_type, params)
+    end
+    
+    # Returns a paginated list of media info structures.
+    # You must specify the fields you want to retrieve.
+    # The fields are described in the documentation of the method info.
+    # 
+    # Parameters: 
+    #   options:
+    #     fields (Array) – (optional default return all informations) the fields to retrieve
+    #     page (Integer) – (optional) the page number, default: 1
+    #     per_page (Integer) – (optional) the number of objet per page, default: 10
+    #     Returns:  
+    #     an object with information for the pagination and the result of the query.
     def self.list(options = {})
-      call = "media.list"
+      call_type = "media.list"
+
       page = options[:page].present? ? options[:page] : 1
       per_page = options[:per_page].present? ? options[:per_page] : 10
 
       params = {
-        call: call,
+        :call =>  call_type,
         args: DMCloud::Builder::Media.list(options)
       }
-      DMCloud::Request.execute(call, params)
+      DMCloud::Request.execute(call_type, params)
     end
     
   end

@@ -36,14 +36,6 @@ module DMCloud
     @@config
   end
   
-  def self.identify(request)
-    user_id  = @@config[:user_id]
-    api_key  = @@config[:api_key]
-    checksum = md5(user_id + normalize(request) + api_key)
-    
-    auth_token = user_id + ':' + checksum
-  end
-  
   def self.create_has_library(library)
       define_singleton_method("has_#{library}?") do
         cv="@@#{library}"
@@ -58,9 +50,9 @@ module DMCloud
         class_variable_get(cv)
       end
     end
-
-    create_has_library :treaming
   
+    create_has_library :streaming
+    create_has_library :media
   
     class << self
       # Load a object saved on a file.
@@ -76,8 +68,9 @@ module DMCloud
     end
   
   autoload(:Streaming, 'dm_cloud/streaming')
-
-
+  autoload(:Media, 'dm_cloud/media')
+  autoload(:Request, 'dm_cloud/request')
+  autoload(:Signing, 'dm_cloud/signing')
 end
 
-Dir.glob('dm_cloud/**/*.rb').each{ |m| require File.dirname(__FILE__) + '/dm_cloud/' + m }
+# Dir.glob('dm_cloud/**/*.rb').each{ |m| require File.dirname(__FILE__) + '/dm_cloud/' + m }
