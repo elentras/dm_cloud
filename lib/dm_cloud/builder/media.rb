@@ -40,7 +40,7 @@ module DMCloud
 
         assets_names = ['source'] if assets_names.nil?
         if not fields[:assets]
-          # request = all_assets_fields(request, assets_names)
+          request = all_assets_fields(request, assets_names)
         else
           assets_names.each do |name|
             fields[:assets].each { |value| request << "assets.#{name}.#{value.to_s}" }
@@ -71,7 +71,7 @@ module DMCloud
         
          assets_names = ['source'] if assets_names.nil?
           if not fields[:assets]
-            # request = all_assets_fields(request, assets_names)
+            request = all_assets_fields(request, assets_names)
           else
             assets_names.each do |name|
               fields[:assets].each { |value| request['fields'] << "assets.#{name}.#{value.to_s}" }
@@ -84,6 +84,8 @@ module DMCloud
 
       protected
         # This method exclude stats, but return all information for a media (video or images)
+        # NOTE: This is outside the methods because : too long and recurent.
+        #   It's also used as default if no fields params is submitted.
         def self.all_assets_fields(request, assets_names)
           assets_names.each do |name|
             request['fields'] << "assets.#{name}.download_url"

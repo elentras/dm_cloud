@@ -1,11 +1,11 @@
 # DMCloud
 
-I created this gem to simplify request and responses from DailyMotion Cloud API.
-With this gem, you can :
-- get generated embed code as a string
-- get direct access url to your files (I used this to provide video flux to TV-connected application)
-- (I'm working on ) video creation, delete, paginated lists and video informations (a/v encodings, bitrate, video lenght...)
-- (I'm working on ) CRUD on videos' meta-data
+I created this gem to simplify request and responses from DailyMotion Cloud API.  
+With this gem, you can :  
+- get generated embed code as a string  
+- get direct access url to your files (I used this to provide video flux to TV-connected application)  
+- (Lists works, others on the way) create, delete, paginated lists of videos; with video informations (a/v encodings, bitrate, video lenght...)  
+- (I'm working on ) CRUD on videos' meta-data  
 
 ## Installation
 
@@ -39,7 +39,7 @@ You can note the securitylevel, for more information about it, take a look at `l
       :security_level =>  DMC_SECURITY_LEVEL
     })
 
-Description of security levels :
+Description of security levels :  
 
   *  **None:**  
       The signed URL will be valid for everyone  
@@ -87,6 +87,58 @@ It will return a string containing the direct link to your file.
 
 The next parts will come soon, just need some time to finish it  
 and create corresponding tests.  
+
+---
+### Video explorer :  
+
+If you need to list your video you can use this method :  
+
+    DMCloud::Media.list({:page => 1, :per_page => 10})
+It will return videos information and more :  
+
+result to yaml :  
+    
+    '{"result": {  
+      "list": [{  
+        "embed_url": "http://api.dmcloud.net/player/embed/:your_id/:media_id",  
+        "assets": {  
+          "source": {  
+            "status": "ready",  
+            "video_fps": 25.0,  
+            "file_extension": "mp4",  
+            "video_fps_mode": "CFR",  
+            "container": "MPEG-4",  
+            "audio_samplerate": 44100,  
+            "video_interlaced": false,
+            "video_rotation": 0.0,  
+            "video_bitrate": 1000618,  
+            "created": 1347641702,  
+            "audio_nbr_channel": 2,  
+            "download_url": "http://cdn.dmcloud.net/route/http/:your_id/:media_id/source-1347634502.mp4?filename=my_video_name-source-1347634502.mp4&auth=1351277028-3-672hcu1m-3fcab065b9bf103e70d3883aa8c657be",  
+            "video_aspect": 1.7777777777777777,  
+            "video_height": 576,  
+            "audio_bitrate": 128017,  
+            "audio_codec": "AAC LC",  
+            "file_size": 119133958,  
+            "duration": 839,  
+            "video_codec": "AVC",  
+            "video_width": 1024,  
+            "global_bitrate": 1134696}},  
+            "created": 1347641696,  
+            "meta": { "title": "my video 1 title"},  
+            "frame_ratio": 1.7740740740740739,  
+            "id": "5053616094739936ec0006af" }],  
+      "pages": 1,
+      "on_this_page": 3,
+      "per_page": 10,
+      "total": 3, 
+      "page": 1}}'
+
+As you can see, this give many information, you can submit a hash like this :  
+
+    DMCloud::Media.list({:page => 1, :per_page => 10, :fields => {:meta => :title }, :assets => [:download_url, :created ]})
+
+
 
 ## Contributing
 

@@ -77,7 +77,9 @@ module DMCloud
 
       params = {
         :call =>  call_type,
-        args: DMCloud::Builder::Media.list(options)
+        args: DMCloud::Builder::Media.list(options),
+        :page => page,
+        :per_page => per_page
       }
       DMCloud::Request.execute(call_type, params)
     end

@@ -164,6 +164,11 @@ module DMCloud
       end
     end
     
+    
+    # This block comes from Cloudkey gem.
+    # I discovered this gem far after I start this one 
+    # and I will try to add file upload from http or ftp.
+    # (Missing in their gem)
     def self.normalize params
           case params
           when Array
