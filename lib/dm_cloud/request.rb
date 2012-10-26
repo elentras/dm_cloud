@@ -4,6 +4,8 @@ module DMCloud
   class Request
     
     DAILYMOTION_API = 'http://api.dmcloud.net/api'
+    DAILYMOTION_STATIC = 'http://api.dmcloud.net/api'
+    
     
     def self.send_request(params)
       puts 'body request params : ' + params.to_json + "\n" + '-' * 80
@@ -23,8 +25,9 @@ module DMCloud
     end
     
     def self.execute(call, params = {})
-      request = DMCloud::Signing.identify(params)
-      params['auth'] = request
+      url = define(call)
+      params['auth'] = DMCloud::Signing.identify(params)
+
       result = send_request(params)
       parse_response(result)
     end
@@ -33,6 +36,8 @@ module DMCloud
       puts 'result : ' + result.to_yaml
     end
     
-    
+    def self.define(action)
+      DAILYMOTION_API 
+    end
   end
 end

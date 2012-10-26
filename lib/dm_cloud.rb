@@ -1,9 +1,17 @@
 require "dm_cloud/version"
 require 'yaml'
-  
+
+# This gem's comments come from DailyMotion Cloud API,
+# that's the better way to see changes on new version and logic.
+# For parts more generals and not representating DailyMotion Cloud API,
+# I add some about my own opinion.
 module DMCloud
   
   # Configuration defaults
+  # I used this parts from Slainer68 paybox_system gem.
+  # I liked the concept and how he handle this part.
+  # Thx Slainer68, I created my first gem, 
+  # and next one will be an update to your paybox_system gem.
   @@config = {
     :security_level =>  'none',
     :protocol => 'http'
@@ -18,6 +26,7 @@ module DMCloud
   end
 
   # Configure through yaml file
+  # for ruby scripting usage
   def self.configure_with(yaml_file_path = nil)
     yaml_file_path = YAML_INITIALIZER_PATH  unless yaml_file_path
     begin
@@ -31,46 +40,19 @@ module DMCloud
     configure(config)
   end
 
+  # Access to config variables (security level, user_id and api_key)
+  # NOTE: The unless @@config is not really interesting, 
+  #   this mean we should loose user credentials to API.
   def self.config
     @@config = configure unless @@config
     @@config
   end
-  
-  def self.create_has_library(library)
-      define_singleton_method("has_#{library}?") do
-        cv="@@#{library}"
-        if !class_variable_defined? cv
-          begin 
-            require library.to_s
-            class_variable_set(cv,true)
-          rescue LoadError
-            class_variable_set(cv,false)
-          end
-        end
-        class_variable_get(cv)
-      end
-    end
-  
-    create_has_library :streaming
-    create_has_library :media
-  
-    class << self
-      # Load a object saved on a file.
-      def load(filename)
-        if File.exists? filename
-          o=false
-          File.open(filename,"r") {|fp| o=Marshal.load(fp) }
-          o
-        else
-          false
-        end
-      end
-    end
-  
+
+  # Loading classes to easier access
+  # NOTE: I like this way to handle my classes,
+  #   sexiest than using require 'my_class_file' everywhere
   autoload(:Streaming, 'dm_cloud/streaming')
   autoload(:Media, 'dm_cloud/media')
   autoload(:Request, 'dm_cloud/request')
   autoload(:Signing, 'dm_cloud/signing')
 end
-
-# Dir.glob('dm_cloud/**/*.rb').each{ |m| require File.dirname(__FILE__) + '/dm_cloud/' + m }

@@ -11,11 +11,11 @@ module DMCloud
       api_key  = DMCloud.config[:secret_key]
       
       normalized_request = normalize(request).to_s
-      puts 'normalized_values : ' + normalized_request + "\n" + '-' * 80
+      puts 'identify:: normalized_values : ' + normalized_request + "\n" + '-' * 80
       
       params = user_id + normalized_request + api_key
       
-      puts 'Values before MD5 encrypt  : ' + params + "\n" + '-' * 80
+      puts 'identify:: Values before MD5 encrypt  : ' + params + "\n" + '-' * 80
       
       checksum = Digest::MD5.hexdigest(params)
       auth_token = user_id + ':' + checksum
@@ -39,20 +39,21 @@ module DMCloud
     # Result :
     #   return a string which contain the signed url like 
     #   <url>?auth=<expires>-<sec>-<nonce>-<md5sum>[-<pub-sec-data>]
-    def self.sign(stream)
+    def self.sign(stream, security_datas = nil)
       raise StandardError, "missing :stream in params" unless stream
-      security = security(DMCloud.config[:security_level])
-      sec_data = security_data(DMCloud.config[:security_level])
+      sec_level = security(DMCloud.config[:security_level])
+      sec_data = security_data(DMCloud.config[:security_level], security_datas) unless security_datas.nil?
 
       base = { 
-        :sec_level => security(DMCloud.config[:security_level]),
+        :sec_level => sec_level,
         :url_no_query => stream,
         :expires => (Time.now + 1.hour).to_i,
         :nonce => SecureRandom.hex(16)[0,8],
         :secret => DMCloud.config[:secret_key]
       }
+      
       base.merge!(:sec_data => sec_data, :pub_sec_data => sec_data) unless sec_data.nil?
-      puts base
+
       digest_struct = build_digest_struct(base)
 
       check_sum = Digest::MD5.hexdigest(digest_struct)
@@ -111,7 +112,7 @@ module DMCloud
       type = :none unless type
       type = type.to_sym if type.class == String
       
-      result = case type
+      case type
         when :none
           0 # None
         when :delegate
@@ -129,13 +130,12 @@ module DMCloud
         when :referer
           1 << 6  # A list of URL prefixes separated by spaces stored in the pub-sec-data component (ex: rf=http;//domain.com/a/+http:/domain.com/b/).
       end
-      result
     end
 
     def self.security_data(type, value = nil)
       type = type.to_sym if type.class == String
-      
-      result = case type
+
+      case type
         when :asnum
           "as=#{value}"  # The number part of the end-user AS prefixed by the ‘AS’ string (ie: as=AS41690)
         when :ip
@@ -149,13 +149,12 @@ module DMCloud
         else
           nil
       end
-      result
     end
 
     def self.security_pub_sec_data(type, value)
       type = type.to_sym if type.class == String
       
-      result = case type
+      case type
         when :country
           "cc=#{value}"  # A list of 2 characters long country codes in lowercase by comas. If the list starts with a dash, the rule is inverted (ie: cc=fr,gb,de or cc=-fr,it). This data have to be stored in pub-sec-data component
         when :referer
@@ -163,13 +162,23 @@ module DMCloud
         else
           nil
       end
-      result
     end
     
-    def self.normalize(params)
-      str = params.to_json.to_s
-      str.gsub!(/[^A-Za-z0-9]/, '')
-      str
-    end
+    def self.normalize params
+          case params
+          when Array
+            params.collect { |element| normalize(element) }.join('')
+          when Hash
+            params.to_a.sort_by {|a,b| a.to_s }.collect {|array| array.first.to_s + normalize(array.last)}.join('')
+          else
+            params.to_s
+          end
+        end
+    
+    # def self.normalize(params)
+    #       str = params.to_json.to_s
+    #       str.gsub!(/[^A-Za-z0-9]/, '')
+    #       str
+    #     end
   end
 end

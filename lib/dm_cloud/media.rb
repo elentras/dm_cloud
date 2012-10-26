@@ -72,8 +72,8 @@ module DMCloud
     def self.list(options = {})
       call_type = "media.list"
 
-      page = options[:page].present? ? options[:page] : 1
-      per_page = options[:per_page].present? ? options[:per_page] : 10
+      page = options[:page] ? options[:page] : 1
+      per_page = options[:per_page] ? options[:per_page] : 10
 
       params = {
         :call =>  call_type,

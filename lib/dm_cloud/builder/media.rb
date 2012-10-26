@@ -26,16 +26,10 @@ module DMCloud
         request['fields'] = []
 
         # requested media meta datas
-        fields[:meta].each { |value| request['fields'] << "meta.#{value}" } if fields[:meta].present?
+        fields[:meta] = [ 'title']  unless fields[:meta]
+        fields[:meta].each { |value| request['fields'] << "meta.#{value.to_s}" }
+        request['fields'] += ['id', 'created', 'embed_url', 'frame_ratio']
 
-        #the creation date as a unix timestamp
-        request['fields'] << 'created' if fields[:created]
-
-        # the url of the embed player
-        request['fields'] << 'embed_url' if fields[:embed_url]
-
-        # the ratio of the video frame as a float (eg: 16/9, 4/3, etc).
-        request['fields'] << 'frame_ratio' if fields[:frame_ratio]
         # the worldwide statistics on the number of views
         # request['fields'] << 'stats.global.last_week' if fields[:stats][:global]
 
@@ -46,7 +40,7 @@ module DMCloud
 
         assets_names = ['source'] if assets_names.nil?
         if not fields[:assets]
-          request = all_assets_fields(request, assets_names)
+          # request = all_assets_fields(request, assets_names)
         else
           assets_names.each do |name|
             fields[:assets].each { |value| request << "assets.#{name}.#{value.to_s}" }
@@ -62,16 +56,9 @@ module DMCloud
 
         request['fields'] = []
         # requested media meta datas
-        fields[:meta].each { |key| request << "meta.#{key.to_s}" } if fields[:meta].present?
-
-        #the creation date as a unix timestamp
-        request['fields'] << 'created' if fields[:created]
-
-        # the url of the embed player
-        request['fields'] << 'embed_url' if fields[:embed_url]
-
-        # the ratio of the video frame as a float (eg: 16/9, 4/3, etc).
-        request['fields'] << 'frame_ratio' if fields[:frame_ratio]
+        fields[:meta] = [ 'title']  unless fields[:meta].present?
+        fields[:meta].each { |value| request['fields'] << "meta.#{value.to_s}" }
+        request['fields'] += ['id', 'created', 'embed_url', 'frame_ratio']
 
         # TODO: handle global statistics request in another module
         # the worldwide statistics on the number of views
@@ -84,10 +71,10 @@ module DMCloud
         
          assets_names = ['source'] if assets_names.nil?
           if not fields[:assets]
-            request = all_assets_fields(request, assets_names)
+            # request = all_assets_fields(request, assets_names)
           else
             assets_names.each do |name|
-              fields[:assets].each { |value| request << "assets.#{name}.#{value.to_s}" }
+              fields[:assets].each { |value| request['fields'] << "assets.#{name}.#{value.to_s}" }
             end
           end
 

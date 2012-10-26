@@ -3,6 +3,8 @@ require "openssl"
 require "base64"
 require 'digest/md5'
 
+# This module generate methods to generate video's fluxes
+# before signing it and request it.
 module DMCloud
   class Streaming
       # Default URL to get embed content ou direct url
