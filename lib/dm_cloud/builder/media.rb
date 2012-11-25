@@ -1,4 +1,4 @@
-module DMCloud
+module DmCloud
   module Builder
     module Media
       def self.create(url = '', assets_names = [], meta = {})
@@ -22,13 +22,12 @@ module DMCloud
         request = Hash.new
 
         # the media id
-        request['id'] = media_id
-        request['fields'] = []
+        request[:fields] = []
 
         # requested media meta datas
-        fields[:meta] = [ 'title']  unless fields[:meta]
-        fields[:meta].each { |value| request['fields'] << "meta.#{value.to_s}" }
-        request['fields'] += ['id', 'created', 'embed_url', 'frame_ratio']
+        fields[:meta] = ['title'] unless fields[:meta]
+        fields[:meta].each { |value| request[:fields] << "meta.#{value.to_s}" }
+        request[:fields] += ['id', 'created', 'embed_url', 'frame_ratio']
 
         # the worldwide statistics on the number of views
         # request['fields'] << 'stats.global.last_week' if fields[:stats][:global]
@@ -46,7 +45,7 @@ module DMCloud
             fields[:assets].each { |value| request << "assets.#{name}.#{value.to_s}" }
           end
         end
-        
+        puts "request fields = #{request.to_yaml}"
         request
       end
       
@@ -54,11 +53,11 @@ module DMCloud
         # raise StandardError, "missing :media_id in params" unless media_id
         request = Hash.new
 
-        request['fields'] = []
+        request[:fields] = []
         # requested media meta datas
-        fields[:meta] = [ 'title']  unless fields[:meta].present?
-        fields[:meta].each { |value| request['fields'] << "meta.#{value.to_s}" }
-        request['fields'] += ['id', 'created', 'embed_url', 'frame_ratio']
+        fields[:meta] = ['title'] unless fields[:meta]
+        fields[:meta].each { |value| request[:fields] << "meta.#{value.to_s}" }
+        request[:fields] += ['id', 'created', 'embed_url', 'frame_ratio']
 
         # TODO: handle global statistics request in another module
         # the worldwide statistics on the number of views
@@ -74,7 +73,7 @@ module DMCloud
             request = all_assets_fields(request, assets_names)
           else
             assets_names.each do |name|
-              fields[:assets].each { |value| request['fields'] << "assets.#{name}.#{value.to_s}" }
+              fields[:assets].each { |value| request[:fields] << "assets.#{name}.#{value.to_s}" }
             end
           end
 
@@ -88,27 +87,27 @@ module DMCloud
         #   It's also used as default if no fields params is submitted.
         def self.all_assets_fields(request, assets_names)
           assets_names.each do |name|
-            request['fields'] << "assets.#{name}.download_url"
-            request['fields'] << "assets.#{name}.status"
-            request['fields'] << "assets.#{name}.container"
-            request['fields'] << "assets.#{name}.duration"
-            request['fields'] << "assets.#{name}.global_bitrate"
-            request['fields'] << "assets.#{name}.video_codec"
-            request['fields'] << "assets.#{name}.video_width"
-            request['fields'] << "assets.#{name}.video_height"
-            request['fields'] << "assets.#{name}.video_bitrate"
-            request['fields'] << "assets.#{name}.video_rotation"
-            request['fields'] << "assets.#{name}.video_fps"
-            request['fields'] << "assets.#{name}.video_fps_mode"
-            request['fields'] << "assets.#{name}.video_aspect"
-            request['fields'] << "assets.#{name}.video_interlaced"
-            request['fields'] << "assets.#{name}.audio_codec"
-            request['fields'] << "assets.#{name}.audio_bitrate"
-            request['fields'] << "assets.#{name}.audio_nbr_channel"
-            request['fields'] << "assets.#{name}.audio_samplerate"
-            request['fields'] << "assets.#{name}.created"
-            request['fields'] << "assets.#{name}.file_extension"
-            request['fields'] << "assets.#{name}.file_size"
+            request[:fields] << "assets.#{name}.download_url"
+            request[:fields] << "assets.#{name}.status"
+            request[:fields] << "assets.#{name}.container"
+            request[:fields] << "assets.#{name}.duration"
+            request[:fields] << "assets.#{name}.global_bitrate"
+            request[:fields] << "assets.#{name}.video_codec"
+            request[:fields] << "assets.#{name}.video_width"
+            request[:fields] << "assets.#{name}.video_height"
+            request[:fields] << "assets.#{name}.video_bitrate"
+            request[:fields] << "assets.#{name}.video_rotation"
+            request[:fields] << "assets.#{name}.video_fps"
+            request[:fields] << "assets.#{name}.video_fps_mode"
+            request[:fields] << "assets.#{name}.video_aspect"
+            request[:fields] << "assets.#{name}.video_interlaced"
+            request[:fields] << "assets.#{name}.audio_codec"
+            request[:fields] << "assets.#{name}.audio_bitrate"
+            request[:fields] << "assets.#{name}.audio_nbr_channel"
+            request[:fields] << "assets.#{name}.audio_samplerate"
+            request[:fields] << "assets.#{name}.created"
+            request[:fields] << "assets.#{name}.file_extension"
+            request[:fields] << "assets.#{name}.file_size"
           end
           request
         end

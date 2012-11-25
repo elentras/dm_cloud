@@ -1,4 +1,6 @@
-module DMCloud
+require 'rubygems'
+
+module DmCloud
   class Signing
     # Generate auth token for request from Media
     # Params:
@@ -7,16 +9,16 @@ module DMCloud
     #   return a string which contain the auth token for the request
     #   <url>?auth=<expires>-<sec>-<nonce>-<md5sum>[-<pub-sec-data>]
     def self.identify(request)
-      user_id  = DMCloud.config[:user_key]
-      api_key  = DMCloud.config[:secret_key]
-      
+      user_id  = DmCloud.config[:user_key]
+      api_key  = DmCloud.config[:secret_key]
+
       normalized_request = normalize(request).to_s
-      puts 'identify:: normalized_values : ' + normalized_request + "\n" + '-' * 80
-      
+      # puts 'identify:: normalized_values : ' + normalized_request + "\n" + '-' * 80
+
       params = user_id + normalized_request + api_key
-      
-      puts 'identify:: Values before MD5 encrypt  : ' + params + "\n" + '-' * 80
-      
+
+      # puts 'identify:: Values before MD5 encrypt  : ' + params + "\n" + '-' * 80
+
       checksum = Digest::MD5.hexdigest(params)
       auth_token = user_id + ':' + checksum
 
@@ -41,27 +43,25 @@ module DMCloud
     #   <url>?auth=<expires>-<sec>-<nonce>-<md5sum>[-<pub-sec-data>]
     def self.sign(stream, security_datas = nil)
       raise StandardError, "missing :stream in params" unless stream
-      sec_level = security(DMCloud.config[:security_level])
-      sec_data = security_data(DMCloud.config[:security_level], security_datas) unless security_datas.nil?
+      sec_level = security(DmCloud.config[:security_level])
+      sec_data = security_data(DmCloud.config[:security_level], security_datas) unless security_datas.nil?
 
       base = { 
         :sec_level => sec_level,
         :url_no_query => stream,
-        :expires => (Time.now + 1.hour).to_i,
+        :expires => 1.hours.from_now.to_i,
         :nonce => SecureRandom.hex(16)[0,8],
-        :secret => DMCloud.config[:secret_key]
+        :secret => DmCloud.config[:secret_key]
       }
-      
       base.merge!(:sec_data => sec_data, :pub_sec_data => sec_data) unless sec_data.nil?
 
       digest_struct = build_digest_struct(base)
-
       check_sum = Digest::MD5.hexdigest(digest_struct)
 
       signed_url = [base[:expires], base[:sec_level], base[:nonce], check_sum].compact
       signed_url.merge!(:pub_sec_data => sec_data) unless sec_data.nil?
       
-      puts signed_url
+      # puts signed_url
       
       signed_url = signed_url.join('-')
       signed_url
@@ -107,7 +107,7 @@ module DMCloud
     #       but gathered and lock at the first use.
     # Result :
     #   Return a string which contain the signed url like 
-    #   http://cdn.dmcloud.net/route/<user_id>/<media_id>/<asset_name>.<asset_extension>?auth=<auth_token>
+    #   http://cdn.DmCloud.net/route/<user_id>/<media_id>/<asset_name>.<asset_extension>?auth=<auth_token>
     def self.security(type = nil)
       type = :none unless type
       type = type.to_sym if type.class == String

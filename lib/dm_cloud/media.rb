@@ -1,6 +1,6 @@
 require 'dm_cloud/builder/media'
 
-module DMCloud
+module DmCloud
   class Media
     # Creates a new media object.
     # This method can either create an empty media object
@@ -22,7 +22,7 @@ module DMCloud
         :call =>  call_type,
         args: Builder::Media.create(options)
       }
-      DMCloud::Request.execute(call_type, params)
+      DmCloud.config[:auto_call] == true ? DmCloud::Request.execute(call_type, params) : {call: call_type, params: params}
     end
     
     # Delete a media object with all its associated assets.
@@ -32,13 +32,14 @@ module DMCloud
     # Return :
     #   Nothing
     def self.delete(media_id)
+      raise StandardError, "missing :media_id in params" unless media_id
       call_type = "media.delete"
 
       params = {
         :call =>  call_type,
         args: { id: media_id}
       }
-      DMCloud::Request.execute(call_type, params)
+      DmCloud.config[:auto_call] == true ? DmCloud::Request.execute(call_type, params) : {call: call_type, params: params}
     end
     
     # Gives information about a given media object.
@@ -48,14 +49,15 @@ module DMCloud
     #   fields (Array) – (required) the list of fields to retrieve.
     # Returns:
     #   a multi-level structure containing about the media related to the requested fields.
-    def self.info(media_id, assets_names = ['source'], fields = [])
+    def self.info(media_id, assets_names = ['source'], fields = {})
+      raise StandardError, "missing :media_id in params" unless media_id
       call_type = "media.info"
 
       params = {
         :call =>  call_type,
-        args: DMCloud::Builder::Media.info(media_id, assets_names, fields)
+        args: DmCloud::Builder::Media.info(media_id, assets_names, fields)
       }
-      DMCloud::Request.execute(call_type, params)
+      DmCloud.config[:auto_call] == true ? DmCloud::Request.execute(call_type, params) : {call: call_type, params: params}
     end
     
     # Returns a paginated list of media info structures.
@@ -67,7 +69,7 @@ module DMCloud
     #     fields (Array) – (optional default return all informations) the fields to retrieve
     #     page (Integer) – (optional) the page number, default: 1
     #     per_page (Integer) – (optional) the number of objet per page, default: 10
-    #     Returns:  
+    #     Returns:
     #     an object with information for the pagination and the result of the query.
     def self.list(options = {})
       call_type = "media.list"
@@ -77,11 +79,11 @@ module DMCloud
 
       params = {
         :call =>  call_type,
-        args: DMCloud::Builder::Media.list(options),
+        args: DmCloud::Builder::Media.list(options),
         :page => page,
         :per_page => per_page
       }
-      DMCloud::Request.execute(call_type, params)
+      DmCloud.config[:auto_call] == true ? DmCloud::Request.execute(call_type, params) : {call: call_type, params: params}
     end
     
   end

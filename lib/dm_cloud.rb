@@ -1,11 +1,10 @@
-require "dm_cloud/version"
 require 'yaml'
 
 # This gem's comments come from DailyMotion Cloud API,
 # that's the better way to see changes on new version and logic.
 # For parts more generals and not representating DailyMotion Cloud API,
 # I add some about my own opinion.
-module DMCloud
+module DmCloud
   
   # Configuration defaults
   # I used this parts from Slainer68 paybox_system gem.
@@ -13,8 +12,11 @@ module DMCloud
   # Thx Slainer68, I created my first gem, 
   # and next one will be an update to your paybox_system gem.
   @@config = {
-    :security_level =>  'none',
-    :protocol => 'http'
+    security_level: 'none',
+    protocol: 'http',
+    auto_call: true,
+    user_key: nil,
+    secret_key: nil
   }
 
   YAML_INITIALIZER_PATH = File.dirname(__FILE__)
@@ -41,8 +43,6 @@ module DMCloud
   end
 
   # Access to config variables (security level, user_id and api_key)
-  # NOTE: The unless @@config is not really interesting, 
-  #   this mean we should loose user credentials to API.
   def self.config
     @@config = configure unless @@config
     @@config

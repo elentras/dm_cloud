@@ -1,4 +1,4 @@
-# DMCloud
+# DmCloud
 
 I created this gem to simplify request and responses from DailyMotion Cloud API.  
 With this gem, you can :  
@@ -33,7 +33,7 @@ You can note the securitylevel, for more information about it, take a look at `l
     DMC_SECRET = 'your api key'
     DMC_SECURITY_LEVEL = :none
     
-    DMCloud.configure( { 
+    DmCloud.configure( { 
       :user_key    =>     DMC_USER_ID,
       :secret_key =>      DMC_SECRET,
       :security_level =>  DMC_SECURITY_LEVEL
@@ -78,12 +78,12 @@ Description of security levels :
 Second part, get you embed url :  
 It will return a string containing the iframe with the DailyMotion Cloud player.  
 
-    DMCloud::Streaming.embed('your video id looks like a secret key')
+    DmCloud::Streaming.embed('your video id looks like a secret key')
 
 Or how to get your direct url :  
 It will return a string containing the direct link to your file.  
 
-    DMCloud::Streaming.url('your video id', ['asset_name'], {options})
+    DmCloud::Streaming.url('your video id', ['asset_name'], {options})
 
 The next parts will come soon, just need some time to finish it  
 and create corresponding tests.  
@@ -93,14 +93,14 @@ and create corresponding tests.
 
 If you need to list your video you can use this method :  
 
-    DMCloud::Media.list({:page => 1, :per_page => 10})
+    DmCloud::Media.list({:page => 1, :per_page => 10})
 It will return videos information and more :  
 
 result to yaml :  
     
     '{"result": {  
       "list": [{  
-        "embed_url": "http://api.dmcloud.net/player/embed/:your_id/:media_id",  
+        "embed_url": "http://api.DmCloud.net/player/embed/:your_id/:media_id",  
         "assets": {  
           "source": {  
             "status": "ready",  
@@ -114,7 +114,7 @@ result to yaml :
             "video_bitrate": 1000618,  
             "created": 1347641702,  
             "audio_nbr_channel": 2,  
-            "download_url": "http://cdn.dmcloud.net/route/http/:your_id/:media_id/source-1347634502.mp4?filename=my_video_name-source-1347634502.mp4&auth=1351277028-3-672hcu1m-3fcab065b9bf103e70d3883aa8c657be",  
+            "download_url": "http://cdn.DmCloud.net/route/http/:your_id/:media_id/source-1347634502.mp4?filename=my_video_name-source-1347634502.mp4&auth=1351277028-3-672hcu1m-3fcab065b9bf103e70d3883aa8c657be",  
             "video_aspect": 1.7777777777777777,  
             "video_height": 576,  
             "audio_bitrate": 128017,  
@@ -136,7 +136,7 @@ result to yaml :
 
 As you can see, this give many information, you can submit a hash like this :  
 
-    DMCloud::Media.list({:page => 1, :per_page => 10, :fields => {:meta => :title }, :assets => [:download_url, :created ]})
+    DmCloud::Media.list({:page => 1, :per_page => 10, :fields => {:meta => :title }, :assets => [:download_url, :created ]})
 
 
 
