@@ -11,8 +11,10 @@ With this gem, you can :
 
 Add this line to your application's Gemfile:
 
-    gem 'dm_cloud'
-
+    gem 'dm_cloud', "0.0.60" #stable version
+or  
+ 	gem 'dm_cloud' # edge version
+  
 And then execute:
 
     $ bundle
