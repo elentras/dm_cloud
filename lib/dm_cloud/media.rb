@@ -71,17 +71,12 @@ module DmCloud
     #     per_page (Integer) – (optional) the number of objet per page, default: 10
     #     Returns:
     #     an object with information for the pagination and the result of the query.
-    def self.list(options = {})
+    def self.list(page = 1, per_page = 10, fields = {})
       call_type = "media.list"
-
-      page = options[:page] ? options[:page] : 1
-      per_page = options[:per_page] ? options[:per_page] : 10
 
       params = {
         :call =>  call_type,
-        args: DmCloud::Builder::Media.list(options),
-        :page => page,
-        :per_page => per_page
+        args: DmCloud::Builder::Media.list( page, per_page, fields)
       }
       DmCloud.config[:auto_call] == true ? DmCloud::Request.execute(call_type, params) : {call: call_type, params: params}
     end

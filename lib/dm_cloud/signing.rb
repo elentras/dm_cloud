@@ -40,7 +40,7 @@ module DmCloud
     #     To generate this component the parameters are serialized using x-www-form-urlencoded, compressed with gzip and encoded in base64.
     # Result :
     #   return a string which contain the signed url like 
-    #   <url>?auth=<expires>-<sec>-<nonce>-<md5sum>[-<pub-sec-data>]
+    #   <expires>-<sec>-<nonce>-<md5sum>[-<pub-sec-data>]
     def self.sign(stream, security_datas = nil)
       raise StandardError, "missing :stream in params" unless stream
       sec_level = security(DmCloud.config[:security_level])
@@ -50,7 +50,7 @@ module DmCloud
         :sec_level => sec_level,
         :url_no_query => stream,
         :expires => 1.hours.from_now.to_i,
-        :nonce => SecureRandom.hex(16)[0,8],
+        :nonce => SecureRandom.hex(16)[0,16],
         :secret => DmCloud.config[:secret_key]
       }
       base.merge!(:sec_data => sec_data, :pub_sec_data => sec_data) unless sec_data.nil?

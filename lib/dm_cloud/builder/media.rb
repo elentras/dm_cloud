@@ -45,14 +45,15 @@ module DmCloud
             fields[:assets].each { |value| request << "assets.#{name}.#{value.to_s}" }
           end
         end
-        puts "request fields = #{request.to_yaml}"
         request
       end
       
-      def self.list(fields = {})
+      def self.list(page = 1, per_page = 10, fields = {})
         # raise StandardError, "missing :media_id in params" unless media_id
         request = Hash.new
 
+        request[:page] = page
+        request[:per_page] = per_page
         request[:fields] = []
         # requested media meta datas
         fields[:meta] = ['title'] unless fields[:meta]
@@ -68,16 +69,16 @@ module DmCloud
         # request['stats'][COUNTRY_CODE][TIME_INTERVAL] : the statistics on the number of views in a specific country (eg: stats.fr.total, stats.us.last_week, etc...)
         # request['extended_stats'][COUNTRY_CODE][TIME_INTERVAL]
         
-         assets_names = ['source'] if assets_names.nil?
-          if not fields[:assets]
-            request = all_assets_fields(request, assets_names)
-          else
-            assets_names.each do |name|
-              fields[:assets].each { |value| request[:fields] << "assets.#{name}.#{value.to_s}" }
-            end
+        assets_names = ['source'] if assets_names.nil?
+        if not fields[:assets]
+          request = all_assets_fields(request, assets_names)
+        else
+          assets_names.each do |name|
+            fields[:assets].each { |value| request[:fields] << "assets.#{name}.#{value.to_s}" }
           end
+        end
 
-          request
+        request
       end
 
 
@@ -111,7 +112,6 @@ module DmCloud
           end
           request
         end
-
     end
   end
 end

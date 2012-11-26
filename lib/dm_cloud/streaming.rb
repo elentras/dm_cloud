@@ -8,9 +8,9 @@ require 'digest/md5'
 module DmCloud
   class Streaming
       # Default URL to get embed content ou direct url
-      DIRECT_STREAM = '[PROTOCOL]://cdn.DmCloud.net/route/[USER_ID]/[MEDIA_ID]/[ASSET_NAME].[ASSET_EXTENSION]'
-      EMBED_STREAM = '[PROTOCOL]://api.DmCloud.net/embed/[USER_ID]/[MEDIA_ID]?auth=[AUTH_TOKEN]&skin=[SKIN_ID]'
-      EMBED_IFRAME = '<iframe width=[WIDTH] height=[HEIGHT] frameborder="0" scrolling="no" src="[EMBED_URL]"></iframe>'
+      DIRECT_STREAM = "[PROTOCOL]://cdn.dmcloud.net/route/[USER_ID]/[MEDIA_ID]/[ASSET_NAME].[ASSET_EXTENSION]"
+      EMBED_STREAM = "[PROTOCOL]://api.dmcloud.net/embed/[USER_ID]/[MEDIA_ID]"
+      EMBED_IFRAME = '<iframe width="[WIDTH]" height="[HEIGHT]" frameborder="0" scrolling="no" src="[EMBED_URL]"></iframe>'
       
       # Get embeded player
       # Params :
@@ -26,21 +26,22 @@ module DmCloud
         raise StandardError, "missing :media_id in params" unless media_id
         
         skin_id = options[:skin_id] ? options[:skin_id]  : 'modern1'
-        width   = options[:width]   ? options[:width]    : '848'
-        height  = options[:height]  ? options[:height]   : '480'
+        width   = options[:width]   ? options[:width].to_s    : '848'
+        height  = options[:height]  ? options[:height].to_s   : '480'
         
         stream = EMBED_STREAM
         stream.gsub!('[PROTOCOL]', DmCloud.config[:protocol])
         stream.gsub!('[USER_ID]', DmCloud.config[:user_key])
         stream.gsub!('[MEDIA_ID]', media_id)
-        stream.gsub!('[SKIN_ID]', skin_id)
-        stream += '?auth=[AUTH_TOKEN]'.gsub!('[AUTH_TOKEN]', DmCloud::Signing.sign(stream))
+        signed_url = DmCloud::Signing.sign(stream)
+        signed_url = stream + "?auth=#{signed_url}"
 
         frame = EMBED_IFRAME
         frame.gsub!('[WIDTH]', width)
         frame.gsub!('[HEIGHT]', height)
-        frame.gsub!('[EMBED_URL]', stream)
-        frame
+        frame.gsub!('[EMBED_URL]', signed_url)
+
+        frame.html_safe
       end
       
       # Get media url for direct link to the file on DailyMotion Cloud
