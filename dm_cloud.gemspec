@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "dm_cloud"
-  s.version = "0.1.0"
+  s.version = "0.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Jeremy Mortelette"]
-  s.date = "2012-11-25"
+  s.date = "2012-11-26"
   s.description = "This gem will simplify usage of DailyMotion Cloud API, it represent api in ruby style, with automated handler for search and upload files"
   s.email = ["mortelette.jeremy@gmail.com"]
   s.extra_rdoc_files = [
@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
     "README.md",
     "Rakefile",
     "VERSION",
+    "dm_cloud.gemspec",
     "lib/dm_cloud.rb",
     "lib/dm_cloud/builder/media.rb",
     "lib/dm_cloud/media.rb",
