@@ -8,9 +8,9 @@ require 'digest/md5'
 module DmCloud
   class Streaming
       # Default URL to get embed content ou direct url
-      DIRECT_STREAM = "[PROTOCOL]://cdn.dmcloud.net/route/[USER_ID]/[MEDIA_ID]/[ASSET_NAME].[ASSET_EXTENSION]"
-      EMBED_STREAM = "[PROTOCOL]://api.dmcloud.net/embed/[USER_ID]/[MEDIA_ID]"
-      EMBED_IFRAME = '<iframe width="[WIDTH]" height="[HEIGHT]" frameborder="0" scrolling="no" src="[EMBED_URL]"></iframe>'
+      DIRECT_STREAM = "[PROTOCOL]://cdn.dmcloud.net/route/[USER_ID]/[MEDIA_ID]/[ASSET_NAME].[ASSET_EXTENSION]".freeze
+      EMBED_STREAM = "[PROTOCOL]://api.dmcloud.net/embed/[USER_ID]/[MEDIA_ID]".freeze
+      EMBED_IFRAME = '<iframe width="[WIDTH]" height="[HEIGHT]" frameborder="0" scrolling="no" src="[EMBED_URL]"></iframe>'.freeze
       
       # Get embeded player
       # Params :
@@ -29,14 +29,14 @@ module DmCloud
         width   = options[:width]   ? options[:width].to_s    : '848'
         height  = options[:height]  ? options[:height].to_s   : '480'
         
-        stream = EMBED_STREAM
+        stream = EMBED_STREAM.dup
         stream.gsub!('[PROTOCOL]', DmCloud.config[:protocol])
         stream.gsub!('[USER_ID]', DmCloud.config[:user_key])
         stream.gsub!('[MEDIA_ID]', media_id)
         signed_url = DmCloud::Signing.sign(stream)
         signed_url = stream + "?auth=#{signed_url}"
 
-        frame = EMBED_IFRAME
+        frame = EMBED_IFRAME.dup
         frame.gsub!('[WIDTH]', width)
         frame.gsub!('[HEIGHT]', height)
         frame.gsub!('[EMBED_URL]', signed_url)
@@ -57,7 +57,7 @@ module DmCloud
         raise StandardError, "missing :asset_name in params" unless asset_name
         asset_extension = asset_name.split('_').first unless asset_extension
 
-        stream = DIRECT_STREAM
+        stream = DIRECT_STREAM.dup
         stream.gsub!('[PROTOCOL]', DmCloud.config[:protocol])
         stream.gsub!('[USER_ID]', DmCloud.config[:user_key])
         stream.gsub!('[MEDIA_ID]', media_id)
