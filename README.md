@@ -1,6 +1,6 @@
 # DmCloud
 
-"!https://codeclimate.com/badge.png!":https://codeclimate.com/github/elentras/dm_cloud
+[![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/elentras/dm_cloud)
 
 I created this gem to simplify request and responses from DailyMotion Cloud API.  
 With this gem, you can :  
